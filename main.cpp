@@ -18,6 +18,7 @@ using std::vector;
 void build_dictionary(trie_node*);
 bool check_word(string);
 void print_board(word_path*);
+int board_size;
 
 int main(int argc, char** argv) {
   cout << "Building dictionary...\n";
@@ -28,6 +29,10 @@ int main(int argc, char** argv) {
   cout << "Done!\n\n";
 
   // begin UI for solving
+  cout << "Enter N for the board size (N x N):\n";
+  cin >> board_size;
+  word_path::b_size = board_size;
+
   string serialized_board;
   cout << "Enter the serialized board:\n";
   cin >> serialized_board;
@@ -41,7 +46,7 @@ int main(int argc, char** argv) {
   cout << "\t4: Triple word score.\n";
   cin >> flag_code;
 
-  board* game_board = new board(serialized_board, root, flag_code);
+  board* game_board = new board(serialized_board, root, flag_code, board_size);
 
   // print linked list of words, inserted in order of points
   string current_word;
@@ -94,10 +99,18 @@ bool check_word(string word) {
 }
 
 void print_board(word_path* wp) {
-  string border = "+-------+-------+-------+-------+";
-  string middle = "|       |       |       |       |";
+  //string border = "+-------+-------+-------+-------+";
+  //string middle = "|       |       |       |       |";
+  string border = "";
+  string middle = "";
+  for (int i = 0; i < board_size; i++) {
+    border += "+-------";
+    middle += "|       ";
+  }
+  border += "+";
+  middle += "|";
   vector<string> picture;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < board_size; i++) {
     picture.push_back(border);
     for (int j = 0; j < 3; j++) {
       picture.push_back(middle);

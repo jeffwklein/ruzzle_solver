@@ -3,7 +3,6 @@
 #include <iostream>
 #include "word_path.h"
 
-
 word_path::word_path( std::string init_word,
     vector<int> init_indexes, 
     vector< vector<bool> > init_used,
@@ -14,15 +13,17 @@ word_path::word_path( std::string init_word,
       points(init_points),
       next_word(init_next), multiplier(init_mult) {
   if (init_used.size() == 0) {
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < b_size; i++) {
       vector<bool> row;
-      for (int j = 0; j < 4; j++) {
+      for (int j = 0; j < b_size; j++) {
         row.push_back(false);
       }
       used.push_back(row);
     }
   }
 }
+
+int word_path::b_size = 0;
 
 int word_path::get_points() {
   return points * multiplier;

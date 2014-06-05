@@ -4,9 +4,13 @@
 #include <string>
 #include <iostream>
 #include "trie_node.h"
+//#include "board.h"
 
 using std::vector;
 using std::cout;
+
+// dirty hack to cover cross-dependency issue
+class board;
 
 class word_path {
   public:
@@ -16,6 +20,7 @@ class word_path {
         int init_pts = 0, 
         word_path* init_next = NULL,
         int init_mult = 1);
+    static int b_size;
     std::string get_word() { return word; }
     vector<int> get_indexes() { return indexes; }
     vector< vector<bool> > get_used() { return used; }
