@@ -10,7 +10,8 @@ board::board(std::string serialized_board, trie_node* t,
     vector<int> flag_row;
     for (int j = 0; j < board_size; j++) {
       row.push_back( serialized_board[(i*board_size)+j] );
-      flag_row.push_back( ((int)flag_code[(i*board_size)+j])-48 );
+      int mult = ((int)flag_code[(i*board_size)+j] - 48) * 2;
+      flag_row.push_back(mult);
     }
     contents.push_back(row);
     flags.push_back(flag_row);
@@ -105,22 +106,18 @@ void board::find_paths(word_path& wp, trie_node* cursor, int r, int c) {
 }
 
 void board::add_to_word_list(word_path& wp) {
-  int total_points = wp.get_points();
-  // add length points
-  total_points += (wp.get_word().size() > 4) ?
-    ((wp.get_word().size()-4) * 5) : 0;
   // first item in list
   if (words == NULL) {
     words = new word_path(wp.get_word(),
         wp.get_indexes(), wp.get_used(),
-        total_points);
+        wp.get_points());
     return;
   }
   // new head of list
-  if (total_points >= words->get_points()) {
+  if (wp.get_total() >= words->get_total()) {
     words = new word_path(wp.get_word(),
         wp.get_indexes(), wp.get_used(),
-        total_points, words);
+        wp.get_points(), wp.get_multiplier(), words);
     return;
   }
   // otherwise
@@ -129,15 +126,15 @@ void board::add_to_word_list(word_path& wp) {
     // new end of list
     if (cursor->get_next_word() == NULL) {
       word_path* new_word = new word_path(wp.get_word(),
-          wp.get_indexes(), wp.get_used(), total_points);
+          wp.get_indexes(), wp.get_used(), wp.get_points(), wp.get_multiplier());
       cursor->set_next_word(new_word);
       return;
     }
     // insert at proper position in list
-    if (total_points > cursor->get_next_word()->get_points()) {
+    if (wp.get_total() > cursor->get_next_word()->get_total()) {
       word_path* new_word = new word_path(wp.get_word(),
-          wp.get_indexes(), wp.get_used(), total_points,
-          cursor->get_next_word());
+          wp.get_indexes(), wp.get_used(), wp.get_points(),
+          wp.get_multiplier(), cursor->get_next_word());
       cursor->set_next_word(new_word);
       return;
     }

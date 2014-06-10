@@ -37,28 +37,36 @@ int main(int argc, char** argv) {
   cout << "Enter the serialized board:\n";
   cin >> serialized_board;
 
-  string flag_code;
-  cout << "Enter serialized flag codes.\n";
-  cout << "\t0: Regular character.\n";
-  cout << "\t1: Double letter score.\n";
-  cout << "\t2: Triple letter score.\n";
-  cout << "\t3: Double word score.\n";
-  cout << "\t4: Triple word score.\n";
-  cin >> flag_code;
+  string mult_code;
+  cout << "Enter multipliers divided by 2 serialized (e.g. x14 ==> 7):\n";
+  cin >> mult_code;
 
-  board* game_board = new board(serialized_board, root, flag_code, board_size);
+  board* game_board = new board(serialized_board, root, mult_code, board_size);
 
   // print linked list of words, inserted in order of points
   string current_word;
-  int count = 0;
+  int count = 1;
   word_path* cursor = game_board->get_words();
   string input = "";
+  vector<word_path*> buffer;
   while (input != "n" && cursor != NULL) {
-    cout << "\n" << ++count << ". ";
-    print_board(cursor);
     cursor = cursor->get_next_word();
-    cout << "See next word? (y/n): ";
-    cin >> input;
+    buffer.push_back(cursor);
+    if (buffer.size() == 5) {
+      for (int i = 0; i < buffer.size(); i++) {
+        cout << "\n" << count << ". ";
+        print_board(buffer[i]);
+        count++;
+      }
+      cout << "See next 5 words? (y/n): ";
+      cin >> input;
+      buffer.clear();
+    }
+  }
+  for (int i = 0; i < buffer.size(); i++) {
+    cout << "\n" << count << ". ";
+    print_board(cursor);
+    count++;
   }
   return 0;
 }
@@ -121,7 +129,10 @@ void print_board(word_path* wp) {
   int row, col, next_row, next_col;
   vector<int> indexes = wp->get_indexes();
   string word = wp->get_word();
-  cout << word << ":\t" << wp->get_points() << " points\n";
+  cout << word << ":\t" << wp->get_total() << " total points\n";
+  cout << "\tMultiplier: " << wp->get_multiplier() << "\t";
+  cout << "Points: " << wp->get_points() << "\t";
+  cout << "Total: " << wp->get_total() << "\n";
   for (int i = 0; i < indexes.size(); i++) {
     col = indexes[i]%10;
     row = (indexes[i]-col)/10;
@@ -131,7 +142,8 @@ void print_board(word_path* wp) {
       picture[(row*4)+1][(col*8)+4] = '*';
       picture[(row*4)+1][(col*8)+6] = '*';
       picture[(row*4)+2][(col*8)+2] = '*';
-      picture[(row*4)+2][(col*8)+4] = (char)(((int)word[i])-32);
+      // capitalize start letter on path illustration
+      //picture[(row*4)+2][(col*8)+4] = (char)((int)word[i] - 32);
       picture[(row*4)+2][(col*8)+6] = '*';
       picture[(row*4)+3][(col*8)+2] = '*';
       picture[(row*4)+3][(col*8)+4] = '*';
@@ -144,7 +156,6 @@ void print_board(word_path* wp) {
     next_row = (indexes[i+1]-next_col)/10;
     col_change = next_col - col;
     row_change = next_row - row;
-
     //north
     if (row_change == -1 && col_change == 0) {
       picture[(row*4)+1][(col*8)+4] = '|';

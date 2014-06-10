@@ -7,8 +7,8 @@ word_path::word_path( std::string init_word,
     vector<int> init_indexes, 
     vector< vector<bool> > init_used,
     int init_points,
-    word_path* init_next,
-    int init_mult ) : word(init_word),
+    int init_mult,
+    word_path* init_next ) : word(init_word),
       indexes(init_indexes),
       points(init_points),
       next_word(init_next), multiplier(init_mult) {
@@ -25,7 +25,8 @@ word_path::word_path( std::string init_word,
 
 int word_path::b_size = 0;
 
-int word_path::get_points() {
+int word_path::get_total() {
+  if (multiplier == 0) return points;
   return points * multiplier;
 }
 
@@ -46,43 +47,14 @@ void word_path::undo_move(int char_val, int flag) {
   int row = (i-col)/10;
   used[row][col] = false;
   word.erase(word.size()-1, 1);
-  if (flag == 0) {
-    points -= char_val;
-  }
-  else if (flag == 1) {
-    points -= (2*char_val);
-  }
-  else if (flag == 2) {
-    points -= (3*char_val);
-  }
-  else if (flag == 3) {
-    points -= char_val;
-    multiplier /= 2;
-  }
-  else if (flag == 4) {
-    points -= char_val;
-    multiplier /= 3;
-  }
+  points -= char_val;
+  multiplier -= flag;
 }
 
 void word_path::add_points(int char_val, int flag) {
-  if (flag == 0) {
-    points += char_val;
-  }
-  else if (flag == 1) {
-    points += (2*char_val);
-  }
-  else if (flag == 2) {
-    points += (3*char_val);
-  }
-  else if (flag == 3) {
-    points += char_val;
-    multiplier *= 2;
-  }
-  else if (flag == 4) {
-    points += char_val;
-    multiplier *= 3;
-  }
+  points += char_val;
+  multiplier += flag;
 }
+
 
 
