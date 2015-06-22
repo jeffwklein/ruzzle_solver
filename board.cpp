@@ -2,9 +2,9 @@
 #include "trie_node.h"
 #include "word_path.h"
 
-board::board(std::string serialized_board, trie_node* t,
+board::board(std::string serialized_board, trie* t,
     std::string flag_code, int size)
-    : board_size(size), root(t), words(NULL) {
+    : board_size(size), dict(t), words(NULL) {
   for (int i = 0; i < board_size; i++) {
     vector<char> row;
     vector<int> flag_row;
@@ -26,7 +26,7 @@ board::board(std::string serialized_board, trie_node* t,
       word_path wp(s, v_int, v_bool);
       wp.move_forward(contents[i][j], i, j);
       wp.add_points(point_vals[contents[i][j]], point_flag(i, j));
-      find_paths(wp, root->access_by_char(contents[i][j]), i, j);
+      find_paths(wp, dict->get_root()->access_by_char(contents[i][j]), i, j);
       wp.undo_move(point_vals[contents[i][j]], point_flag(i, j));
     }
   }

@@ -10,6 +10,7 @@ class trie {
     ~trie();
     bool build_dictionary(std::string filename);
     bool search(std::string key);
+    trie_node* get_root() { return root; }
   private:
     trie_node* root;
     // helper method for build_dictionary
