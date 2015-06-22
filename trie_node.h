@@ -2,7 +2,6 @@
 #define TRIE_NODE_H
 #include <string>
 #include <vector>
-#include "trie_node.h"
 
 class trie_node {
   public:
